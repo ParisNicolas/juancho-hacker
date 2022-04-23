@@ -3,7 +3,7 @@ let y = 0;
 
 while(x<10){
     x++;
-    y+=x**-x*2;
+    y*=x;
 }
 
 console.log(y);
