@@ -1,15 +1,9 @@
-let img;
-let img1;
-let img2;
-let img3;
-let img4;
+let img, img1, img2, img3, img4;        //backup de imagenes modificadas
+let imgM1=false, imgM2=false, imgM3=false, imgM4=false;     //valores para omitir si ya esta modificada
 let sel;
 
 let color;
-let Red;
-let Green;
-let Blue;
-
+let Red, Green, Blue;
 
 function preload() {
     img = loadImage('./perro.jpg');
@@ -35,18 +29,20 @@ function setup() {
 
     image(img, 0, 0);
 
+    /*
     for (let i = 0; i < img.height; i++) {
         for (let j = 0; j < img.width; j++) {
                 average(j, i);
-                luminance(j, i);
+                //luminance(j, i);
                 //desaturation(j, i);
                 //grayscale(j, i);
         }
     }
     img1.updatePixels();
-    img2.updatePixels();
+    //img2.updatePixels();
     //img3.updatePixels();
     //img4.updatePixels();
+    */
 }
 
 function filternow(){
@@ -55,65 +51,98 @@ function filternow(){
 
     switch(item){
         case "Average": background(255);
-        image(img1, 0, 0); break;
+        applyFilter(average); break;           //image(img1, 0, 0);
         case "Luminance": background(255);
-        image(img2, 0, 0); break;
+        applyFilter(luminance); break;           //image(img2, 0, 0);
         case "Desaturation": background(255);
-        image(img3, 0, 0); break;
+        applyFilter(desaturation); break;           //image(img3, 0, 0);
         case "Grayscale Algorithm": background(255);
-        image(img4, 0, 0); break;
+        applyFilter(grayscale); break;           //image(img4, 0, 0);
     }
 
 }
 
-function searchFilter(funsion){
+function applyFilter(funsion){          //aplica el filtro  ##falta la opcion para que omita si ya se hizo antes
+
     for (let i = 0; i < img.height; i++) {
         for (let j = 0; j < img.width; j++) {
-                funsion(j, i);
+                funsion(j, i);                  //aplicar filtro especifico
         }
+    }
+    funsion(0,0,true);                          //actualizar imagen especifica
+}
+
+
+function average(x, y, updateImg=false){
+    if(updateImg){
+        img1.updatePixels();
+        imgM1=true;
+        image(img1, 0, 0);
+    }else{
+
+        Red = img.get(x,y)[0];
+        Green = img.get(x,y)[1];
+        Blue = img.get(x,y)[2];
+        
+        color = (Red + Green + Blue)/3;
+
+        img1.set(x, y, color);
+
     }
 }
 
+function luminance(x, y, updateImg=false){
+    if(updateImg){
+        img2.updatePixels();
+        imgM2=true;
+        image(img2, 0, 0);
+    }else{
 
-function average(x, y){
-    Red = img.get(x,y)[0];
-    Green = img.get(x,y)[1];
-    Blue = img.get(x,y)[2];
-    
-    color = (Red + Green + Blue)/3;
+        Red = img.get(x,y)[0];
+        Green = img.get(x,y)[1];
+        Blue = img.get(x,y)[2];
+        
+        color = color = Red * 0.2126 + Green * 0.7152 + Blue * 0.0722;
 
-    img1.set(x, y, color);
+        img2.set(x, y, color);
+
+    }
 }
 
-function luminance(x, y){
-    Red = img.get(x,y)[0];
-    Green = img.get(x,y)[1];
-    Blue = img.get(x,y)[2];
-    
-    color = color = Red * 0.2126 + Green * 0.7152 + Blue * 0.0722;
+function desaturation(x, y, updateImg=false){
+    if(updateImg){
+        img1.updatePixels();
+        imgM3=true;
+        image(img1, 0, 0);
+    }else{
 
-    img2.set(x, y, color);
+        Red = img.get(x,y)[0];
+        Green = img.get(x,y)[1];
+        Blue = img.get(x,y)[2];
+        
+        color = (Math.max(Red, Green, Blue) + Math.min(Red, Green, Blue))/2;
+
+        img3.set(x, y, color);
+
+    }
 }
 
-function desaturation(x, y){
-    Red = img.get(x,y)[0];
-    Green = img.get(x,y)[1];
-    Blue = img.get(x,y)[2];
-    
-    color = (Math.max(Red, Green, Blue) + Math.min(Red, Green, Blue))/2;
+function grayscale(x, y, updateImg=false){
+    if(updateImg){
+        img1.updatePixels();
+        imgM4=true;
+        image(img1, 0, 0);
+    }else{
 
-    img3.set(x, y, color);
-}
+        Red = img.get(x,y)[0];
+        Green = img.get(x,y)[1];
+        Blue = img.get(x,y)[2];
+        
+        ConversionFactor = 255 / (6 - 1)
+        AverageValue = (Red + Green + Blue) / 3
+        color = parseInt(AverageValue / ConversionFactor) * ConversionFactor
 
-function grayscale(x, y){
+        img4.set(x, y, color);
 
-    Red = img.get(x,y)[0];
-    Green = img.get(x,y)[1];
-    Blue = img.get(x,y)[2];
-    
-    ConversionFactor = 255 / (6 - 1)
-    AverageValue = (Red + Green + Blue) / 3
-    color = parseInt(AverageValue / ConversionFactor) * ConversionFactor
-
-    img4.set(x, y, color);
+    }
 }
